@@ -3,7 +3,7 @@
 title: Joel Lee
 description: Digital Humanities | Contract Researcher at the USHMM
 
-baseurl: /home #name of GitHub repository
+baseurl: /web-2022 #name of GitHub repository
 url: "joelsjlee.com" #custom url to be used instead of GitHub repository
 email: "joelsjlee@duck.com"#
 
