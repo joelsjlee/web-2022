@@ -3,7 +3,7 @@ layout: post
 title: Mapping Citizen History Metadata
 description: History Unfolded Metadata visualized with Leaflet
 ---
-
+![](../../assets/images/huf-logo.jpg)
 [History Unfolded](https://newspapers.ushmm.org/) is a citizen history project of the United States Holocaust Memorial Museum in Washington, DC. It relies on the power of crowdsourcing to create a unique dataset of newspaper articles so that we can better understand what news Americans had access to throughout the Holocaust.
 
 While the project currently allows for users to look through events and their articles in list form, the metadata that users input when uploading an article can be transformed into geographic data. This blog post aims to show the process of taking citizen history metadata and turning it into a useful interactive map, but also serves as an example of how metadata in collections broadly can be used in unique ways to create new visualizations.
@@ -12,9 +12,10 @@ This is a series that is based on my work throughout 2022-2023 in working with e
 
 The Data
 ------------
-
+![](../../assets/images/huf-events.jpg)
 The general structure of the data in History Unfolded is first filtered through events. These are specific important historical events chosen so that users can read about or find and upload articles relevant to those events. In any particular event, we can look through the articles and sort them by a variety of different metadata fields.
 
+![](../../assets/images/huf-backend.jpg)
 Users need to input metadata when making an article submission to History Unfolded, such as the headline, the newspaper name, the page number it was found on, and so on. However, the relevant data for us to use for plotting the articles is the ‘City’ and ‘State’ in which the newspaper is located. From there, we can use that metadata to convert the city and state name into something a mapping library can understand and plot, namely latitude and longitude coordinates.
 
 Geocoding
@@ -24,13 +25,15 @@ Geocoding is the process by which we go from any particular textual address to g
 
 Because the backend data is given to us as a csv, we can use Python and Jupyter Notebooks to easily wrangle with the data. Below is an example of how one could make a request to the Google Maps API with the city and state name Groton, CT: 
 
-~~~cpp
+```python
 import urllib.request, json
 with urllib.request.urlopen(
   "https://maps.googleapis.com/maps/api//geocode/json?address={groton},{ct}&key=INSERT_API_KEY") as url:
   geodata = json.loads(url.read().decode())
   print(geo_data['results'][0]['geometry']['location'])
-~~~
+
+{'lat':41.3497456, 'lng': -72.0790717}
+```
 
 As you can see, we input the city “Groton” and the state “CT” into the url of the request and we receive the latitude and longitude of the result. Doing this process for all of the entries in a particular event of article submissions gives us two additional columns of metadata to go along with every entry: the latitude and the longitude of the location that it was published in.
 
@@ -45,7 +48,8 @@ Leaflet is a mapping library built in Javascript that allows for the light and e
 
 Application
 ------------
-
+![](../../assets/images/huf-map.jpg)
+![](../../assets/images/huf-marker.jpg)
 The working version for the interactive map can be found [here](https://huf-map-git-byline-joelsjlee.vercel.app/). The map’s data points are categorized, like the website, by events that you can switch from by the top dropdown bar. All points for each event are displayed and you can click on any numbered cluster to reveal their points, and then any marker point to open the sidebar and get all the relevant metadata for a particular point. There are a couple widgets that were added to the map to make it more interactive.
 
 1. Sidebar (from [sidebar-v2](https://github.com/Turbo87/sidebar-v2))
@@ -62,10 +66,12 @@ Observations and Purpose
 
 By transforming the HUF data and making it usable for a mapping application, we can see a variety of different new ways that users can interact with the data.
 
-*Rural vs. Urban, Article Density*
+*Rural vs. Urban, Article Density*  
+
 Displaying points in this web application allows for users to easily understand the rural and urban distribution of our dataset. In list form, this is hard to comprehend without specific population knowledge about particular geographic areas and even then requires scrolling through the articles in list form. When points are displayed on a map, users can easily see what kinds of or how many articles are being published in rural and urban areas. In a map form, it is also more immediately clear what areas have been sufficiently searched and uploaded for articles and which areas may need more research.
 
-*Personal User Interactivity and Educational Use*
+*Personal User Interactivity and Educational Use*  
+
 Having an interactive map as the way that users first explore these newspapers makes it easy for them to scroll and zoom to familiar, popular, or personal areas, without having to go through the events by list or by search on the normal HUF page. Users can move to these areas and also be able to see articles in areas nearby, a feature not immediately accessible with the data in its current format. Without having to search for the city that they are interested in, they can scroll to the area and even if there are no articles there, there may be articles around that particular area. In a classroom setting, this can be used to introduce students to articles in their area and around their state.
 
 Future Work

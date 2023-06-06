@@ -1,9 +1,9 @@
 ### your site title here
 
 title: Joel Lee
-description: Digital Humanities | Contract Researcher at the USHMM
+description: Researcher in Digital Humanities at the USHMM
 
-baseurl: / #name of GitHub repository
+baseurl:  #name of GitHub repository
 url: "joelsjlee.com" #custom url to be used instead of GitHub repository
 email: "joelsjlee@duck.com"#
 
