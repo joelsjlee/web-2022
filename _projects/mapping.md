@@ -27,7 +27,9 @@ Because the backend data is given to us as a csv, we can use Python and Jupyter 
 
 ~~~python
 import urllib.request, json
-with urllib.request.urlopen("https://maps.googleapis.com/maps/api//geocode/json?address={groton},{ct}&key=INSERT_API_KEY") as url:
+with urllib.request.urlopen(
+  "https://maps.googleapis.com/maps/api//geocode/json?address={groton},{ct}&key=INSERT_API_KEY"
+  ) as url:
   geodata = json.loads(url.read().decode())
   print(geo_data['results'][0]['geometry']['location'])
 
