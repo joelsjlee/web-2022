@@ -1,4 +1,4 @@
-I"Å.<p><img src="../../assets/images/huf-logo.jpg" alt="" />
+I"~.<p><img src="../../assets/images/huf-logo.jpg" alt="" />
 <a href="https://newspapers.ushmm.org/">History Unfolded</a> is a citizen history project of the United States Holocaust Memorial Museum in Washington, DC. It relies on the power of crowdsourcing to create a unique dataset of newspaper articles so that we can better understand what news Americans had access to throughout the Holocaust.</p>
 
 <p>While the project currently allows for users to look through events and their articles in list form, the metadata that users input when uploading an article can be transformed into geographic data. This blog post aims to show the process of taking citizen history metadata and turning it into a useful interactive map, but also serves as an example of how metadata in collections broadly can be used in unique ways to create new visualizations.</p>
@@ -19,8 +19,7 @@ Users need to input metadata when making an article submission to History Unfold
 <p>Because the backend data is given to us as a csv, we can use Python and Jupyter Notebooks to easily wrangle with the data. Below is an example of how one could make a request to the Google Maps API with the city and state name Groton, CT:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">urllib.request</span><span class="p">,</span> <span class="n">json</span>
-<span class="k">with</span> <span class="n">urllib</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">urlopen</span><span class="p">(</span>
-  <span class="s">"https://maps.googleapis.com/maps/api//geocode/json?address={groton},{ct}&amp;key=INSERT_API_KEY"</span><span class="p">)</span> <span class="k">as</span> <span class="n">url</span><span class="p">:</span>
+<span class="k">with</span> <span class="n">urllib</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">"https://maps.googleapis.com/maps/api//geocode/json?address={groton},{ct}&amp;key=INSERT_API_KEY"</span><span class="p">)</span> <span class="k">as</span> <span class="n">url</span><span class="p">:</span>
   <span class="n">geodata</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">loads</span><span class="p">(</span><span class="n">url</span><span class="p">.</span><span class="n">read</span><span class="p">().</span><span class="n">decode</span><span class="p">())</span>
   <span class="k">print</span><span class="p">(</span><span class="n">geo_data</span><span class="p">[</span><span class="s">'results'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">'geometry'</span><span class="p">][</span><span class="s">'location'</span><span class="p">])</span>
 

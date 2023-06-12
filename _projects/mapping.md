@@ -25,15 +25,14 @@ Geocoding is the process by which we go from any particular textual address to g
 
 Because the backend data is given to us as a csv, we can use Python and Jupyter Notebooks to easily wrangle with the data. Below is an example of how one could make a request to the Google Maps API with the city and state name Groton, CT: 
 
-```python
+~~~python
 import urllib.request, json
-with urllib.request.urlopen(
-  "https://maps.googleapis.com/maps/api//geocode/json?address={groton},{ct}&key=INSERT_API_KEY") as url:
+with urllib.request.urlopen("https://maps.googleapis.com/maps/api//geocode/json?address={groton},{ct}&key=INSERT_API_KEY") as url:
   geodata = json.loads(url.read().decode())
   print(geo_data['results'][0]['geometry']['location'])
 
 {'lat':41.3497456, 'lng': -72.0790717}
-```
+~~~
 
 As you can see, we input the city “Groton” and the state “CT” into the url of the request and we receive the latitude and longitude of the result. Doing this process for all of the entries in a particular event of article submissions gives us two additional columns of metadata to go along with every entry: the latitude and the longitude of the location that it was published in.
 
