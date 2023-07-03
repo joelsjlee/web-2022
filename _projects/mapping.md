@@ -2,6 +2,7 @@
 layout: post
 title: Mapping Citizen History Metadata
 description: History Unfolded Metadata visualized with Leaflet
+# img: map-thumbnail.jpg
 ---
 ![](../../assets/images/huf-logo.jpg)
 [History Unfolded](https://newspapers.ushmm.org/) is a citizen history project of the United States Holocaust Memorial Museum in Washington, DC. It relies on the power of crowdsourcing to create a unique dataset of newspaper articles so that we can better understand what news Americans had access to throughout the Holocaust.
