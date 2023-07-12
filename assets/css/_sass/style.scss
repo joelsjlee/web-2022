@@ -170,3 +170,11 @@ blockquote {
 
 .scroll::-webkit-scrollbar {
   display: none; }
+
+  // My custom css  
+img + em { 	
+  display: block; 
+  text-align: center; 
+  font-size: 16px
+} 
+//image captions
