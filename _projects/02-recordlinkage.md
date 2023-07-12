@@ -7,7 +7,7 @@ description: Record Linkage and Deduplication in the History Unfolded Dataset
 ![The logo of History Unfolded.](../../assets/images/huf-logo.jpg)
 [History Unfolded](https://newspapers.ushmm.org/) is a citizen history project of the United States Holocaust Memorial Museum in Washington, DC. It relies on the power of crowdsourcing to create a unique dataset of newspaper articles so that we can better understand what news Americans had access to throughout the Holocaust.
 
-In this blog post, we will explore how we can correctly identify duplicate entries in the HUF dataset and what we can do when we find them. 
+In this blog post, we will explore how we can correctly identify duplicate entries in the HUF dataset and what we can do when we find them. The full code for this post can be found in [this Google Colab notebook](https://colab.research.google.com/drive/1JYCxH56WqzQFNUukyOsV1QoT8iMKqEQQ?usp=sharing), but is explained in more detail below.
 
 This is a series that is based on my work through the 2022-2023 year in working with exploratory methods and tools on citizen history data. In this article we will be using Python and the Python library [recordlinkage](https://recordlinkage.readthedocs.io/en/latest/).
 
