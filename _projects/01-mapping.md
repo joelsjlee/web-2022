@@ -4,7 +4,9 @@ title: Mapping Citizen History Metadata
 description: History Unfolded Metadata visualized with Leaflet
 # img: map-thumbnail.jpg
 ---
-![](../../assets/images/huf-logo.jpg)
+![The History Unfolded Logo](../../assets/images/huf-logo.jpg)
+*The History Unfolded Logo*
+
 [History Unfolded](https://newspapers.ushmm.org/) is a citizen history project of the United States Holocaust Memorial Museum in Washington, DC. It relies on the power of crowdsourcing to create a unique dataset of newspaper articles so that we can better understand what news Americans had access to throughout the Holocaust.
 
 While the project currently allows for users to look through events and their articles in list form, the metadata that users input when uploading an article can be transformed into geographic data. This blog post aims to show the process of taking citizen history metadata and turning it into a useful interactive map, but also serves as an example of how metadata in collections broadly can be used in unique ways to create new visualizations.
@@ -13,10 +15,14 @@ This is a series that is based on my work throughout 2022-2023 in working with e
 
 The Data
 ------------
-![](../../assets/images/huf-events.jpg)
+![The layout of the events on History Unfolded](../../assets/images/huf-events.jpg)
+*The layout of the events on History Unfolded*
+
 The general structure of the data in History Unfolded is first filtered through events. These are specific important historical events chosen so that users can read about or find and upload articles relevant to those events. In any particular event, we can look through the articles and sort them by a variety of different metadata fields.
 
-![](../../assets/images/huf-backend.jpg)
+![A spreadsheet representation of HUF data](../../assets/images/huf-backend.jpg)
+*A spreadsheet representation of HUF data*
+
 Users need to input metadata when making an article submission to History Unfolded, such as the headline, the newspaper name, the page number it was found on, and so on. However, the relevant data for us to use for plotting the articles is the ‘City’ and ‘State’ in which the newspaper is located. From there, we can use that metadata to convert the city and state name into something a mapping library can understand and plot, namely latitude and longitude coordinates.
 
 Geocoding
@@ -50,8 +56,12 @@ Leaflet is a mapping library built in Javascript that allows for the light and e
 
 Application
 ------------
-![](../../assets/images/huf-map.jpg)
-![](../../assets/images/huf-marker.jpg)
+![The initial view of the map](../../assets/images/huf-map.jpg)
+*The initial view of the map*
+
+![The view of the map when a marker is clicked on](../../assets/images/huf-marker.jpg)
+*The view of the map when a marker is clicked on*
+
 The working version for the interactive map can be found [here](https://huf-map-git-byline-joelsjlee.vercel.app/). The map’s data points are categorized, like the website, by events that you can switch from by the top dropdown bar. All points for each event are displayed and you can click on any numbered cluster to reveal their points, and then any marker point to open the sidebar and get all the relevant metadata for a particular point. There are a couple widgets that were added to the map to make it more interactive.
 
 1. Sidebar (from [sidebar-v2](https://github.com/Turbo87/sidebar-v2))

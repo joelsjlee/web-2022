@@ -5,6 +5,8 @@ description: Record Linkage and Deduplication in the History Unfolded Dataset
 # img: record-thumbnail.jpg
 ---
 ![The logo of History Unfolded.](../../assets/images/huf-logo.jpg)
+*The History Unfolded Logo*
+
 [History Unfolded](https://newspapers.ushmm.org/) is a citizen history project of the United States Holocaust Memorial Museum in Washington, DC. It relies on the power of crowdsourcing to create a unique dataset of newspaper articles so that we can better understand what news Americans had access to throughout the Holocaust.
 
 In this blog post, we will explore how we can correctly identify duplicate entries in the HUF dataset and what we can do when we find them. The full code for this post can be found in [this Google Colab notebook](https://colab.research.google.com/drive/1JYCxH56WqzQFNUukyOsV1QoT8iMKqEQQ?usp=sharing), but is explained in more detail below.
@@ -99,10 +101,13 @@ def connectedComponents(comps, dfA):
 Now that we have the group of 5/5 record pairs which we believe are all duplicates, we want to be able to export that data in a clean way. And the recordlinkage library allows us to do this through its connected components function. While we have been talking about record pairs up until this point, the reality is that the duplicates may actually exist in groups, where three or more records all are about the same article entry, and so each article submission is a duplicate of all other articles in the same group. This forms groups called connected components in mathematical graph theory. We can output the ids of each of these connected components in json format as a list of lists, where each inner list is a group of duplicate entries.
 
 ![Groupings of connected components output as a list of lists.](../../assets/images/dedup-ccs.jpg)
+*Groupings of id connected components output as a list of lists*
 
 Step 5: Manual Review
 ------------
 ![The interface provided by recordlinkage to perform manual reviews.](../../assets/images/dedup-annotate.jpg)
+*The interface provided by recordlinkage to perform manual reviews*
+
 The last step in this proposed process is to do a manual review. While the intent is for the recordlinkage to find all of the duplicates, we have to account for possible errors. There are two types of errors that can occur, false positives and false negatives. False positives are where the tool identifies what it thinks is a duplicate, however in fact upon review, it is not a duplicate. A false negative is a case where an entry is not correctly identified as a duplicate. As it relates to manual review, we can only reasonably consider the false positive cases, meaning that we look through each of the connected components of duplicates to see if each article is in fact a duplicate of each other. Finding the false negatives would involve looking for duplicates over the entirety of the remaining dataset.
 
 Luckily, recordlinkage also provides [a tool for this manual review](https://recordlinkage.readthedocs.io/en/latest/annotation.html), seen in the image above. This tool's input is a function output in the recordlinkage library function that you can run. Then you can review all of the proposed matches manually.
