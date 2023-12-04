@@ -1,0 +1,91 @@
+I"?<div class="ProjectContainer">
+
+	<div class="gallery">
+
+
+  
+
+  
+
+  <div class="projectTile">
+          <a href="/projects/01-mapping/">
+          <span>
+              <h2>Mapping Citizen History Metadata</h2>
+              <br />
+              <p>History Unfolded Metadata visualized with Leaflet</p>
+          </span>
+          </a>
+  </div>
+
+  
+
+  
+
+  
+
+  <div class="projectTile">
+          <a href="/projects/02-recordlinkage/">
+          <span>
+              <h2>Deduplicating Citizen History Metadata</h2>
+              <br />
+              <p>Record Linkage and Deduplication in the History Unfolded Dataset</p>
+          </span>
+          </a>
+  </div>
+
+  
+
+  
+
+  
+
+  <div class="projectTile">
+          <a href="/projects/03-ehri/">
+          <span>
+              <h2>Copy-Original Links in the EHRI Portal</h2>
+              <br />
+              <p>Linking Archival Metadata across Holocaust Institutions</p>
+          </span>
+          </a>
+  </div>
+
+  
+
+  
+
+  
+
+  <div class="projectTile">
+          <a href="/projects/04-byline/">
+          <span>
+              <h2>Byline Normalization in Newspaper Data</h2>
+              <br />
+              <p>Clustering and Normalizing Textual Metadata</p>
+          </span>
+          </a>
+  </div>
+
+  
+
+  
+
+  
+
+  <div class="projectTile">
+          <a href="/projects/05-penn/">
+          <span>
+              <h2>Projects at Penn Digital Scholarship</h2>
+              <br />
+              <p>Summaries of the projects worked on with Penn Libraries and the Price Lab for DH</p>
+          </span>
+          </a>
+  </div>
+
+  
+
+  
+
+	</div>
+
+</div>
+:ET

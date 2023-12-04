@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1" name="viewport">
+        <link rel="stylesheet" href="/assets/css/main.css">
+
+        <h1 class="post-headline">Joel Lee</h1>
+        <h3 class="post-description">Data Engineer in the Digital Scholarship Group at Northeastern Library</h3>
+
+        <!-- <div class="links scroll">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+        <a href="/blog/">Blog</a>
+        <a href="/archive/">Archive</a>
+</div> -->
+
+
+        <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Deduplicating Citizen History Metadata | Joel Lee</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Deduplicating Citizen History Metadata" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Record Linkage and Deduplication in the History Unfolded Dataset" />
+<meta property="og:description" content="Record Linkage and Deduplication in the History Unfolded Dataset" />
+<link rel="canonical" href="http://localhost:4000/projects/02-recordlinkage/" />
+<meta property="og:url" content="http://localhost:4000/projects/02-recordlinkage/" />
+<meta property="og:site_name" content="Joel Lee" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-12-04T17:16:11-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Deduplicating Citizen History Metadata" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-12-04T17:16:11-05:00","datePublished":"2023-12-04T17:16:11-05:00","description":"Record Linkage and Deduplication in the History Unfolded Dataset","headline":"Deduplicating Citizen History Metadata","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/projects/02-recordlinkage/"},"url":"http://localhost:4000/projects/02-recordlinkage/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+        <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="manifest" href="site.webmanifest">
+
+
+        <!-- MathJax -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+     processEscapes: true
+    }
+  });
+</script>
+
+
+        <!-- Load fontawesome here for faster loadtimes: https://stackoverflow.com/a/35880730/9523246 -->
+        <script type="text/javascript"> (function() { var css = document.createElement('link'); css.href = 'https://use.fontawesome.com/releases/v5.11.0/css/all.css'; css.rel = 'stylesheet'; css.type = 'text/css'; document.getElementsByTagName('head')[0].appendChild(css); })(); </script>
+
+    </head>
+
+    <body>
+        <main>
+            <article>
+                <h1 class="post-headline">Deduplicating Citizen History Metadata</h1>
+<!-- <p class="meta"><small>December 04, 2023</small></p> -->
+
+<p><img src="../../assets/images/huf-logo.jpg" alt="The logo of History Unfolded.">
+<em>The History Unfolded Logo</em></p>
+
+<p><a href="https://newspapers.ushmm.org/" target="_blank" rel="noopener noreferrer">History Unfolded</a> is a citizen history project of the United States Holocaust Memorial Museum in Washington, DC. It relies on the power of crowdsourcing to create a unique dataset of newspaper articles so that we can better understand what news Americans had access to throughout the Holocaust.</p>
+
+<p>In this blog post, we will explore how we can correctly identify duplicate entries in the HUF dataset and what we can do when we find them. The full code for this post can be found in <a href="https://colab.research.google.com/drive/1JYCxH56WqzQFNUukyOsV1QoT8iMKqEQQ?usp=sharing" target="_blank" rel="noopener noreferrer">this Google Colab notebook</a>, but is explained in more detail below.</p>
+
+<p>This is a series that is based on my work through the 2022-2023 year in working with exploratory methods and tools on citizen history data. In this article we will be using Python and the Python library <a href="https://recordlinkage.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer">recordlinkage</a>.</p>
+
+<h2 id="the-problem">The Problem</h2>
+<p>One issue that arises in citizen history and crowdsourcing projects is duplicate entries. This is where users end up for a variety of reasons, submitting the same exact entry. This could be because they do not check to see if the entry already exists in the dataset, or they are otherwise not informed that the entry already exists in the dataset. Particularly for HUF, there are instances when duplicate entries are submitted and subsequently approved because the user may be a student and it is important that their work in finding an entry is recognized. Additionally, the standard for dealing with duplicates for HUF was not always consistent, and some duplicate entries are commented and marked as duplicates but still published. This results in a dataset with duplicate entries for a variety of systemic reasons that may or may not need to be ultimately removed but should be identified and marked.</p>
+
+<h2 id="record-linkage--deduplication">Record Linkage / Deduplication</h2>
+<p>In computer science, the process for resolving this issue is often called record linkage or deduplication. This is where we programmatically match pairs of records that we believe to be duplicates. Oftentimes duplicate records will actually be referring to the same entity, but their metadata may be slightly different (ex. “Jane’s third birthday party” vs “3rd birthday party for Jane”). In a naive computational approach like exact string matching, these two pieces of metadata would be identified differently. We want these records to be matched together so that they can correctly be identified to the same entity.</p>
+
+<p>Because the data in HUF can be retrieved as a CSV, we can easily work with the data in Python and Jupyter Notebooks, and with a python library called recordlinkage. This library will allow us to make use of the tools used in standard record linkage and deduplication, so that we can analyze our data.</p>
+
+<h2 id="step-1-standardization">Step 1: Standardization</h2>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">standardize</span><span class="p">(</span><span class="n">dfA</span><span class="p">):</span>
+  <span class="c1"># You can write any of your own standardizing scripts here for the fields in your dataset.
+</span>  <span class="n">dfA</span><span class="p">[</span><span class="s">"Headline"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dfA</span><span class="p">[</span><span class="s">"Headline"</span><span class="p">].</span><span class="nb">str</span><span class="p">.</span><span class="n">strip</span><span class="p">()).</span><span class="nb">str</span><span class="p">.</span><span class="n">lower</span><span class="p">()</span>
+  <span class="n">dfA</span><span class="p">[</span><span class="s">"Sub Headline"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dfA</span><span class="p">[</span><span class="s">"Sub Headline"</span><span class="p">].</span><span class="nb">str</span><span class="p">.</span><span class="n">strip</span><span class="p">()).</span><span class="nb">str</span><span class="p">.</span><span class="n">lower</span><span class="p">()</span>
+  <span class="c1"># This line is to replace all the blank fields with NaNs so that you can avoid errors when running scripts over the data.
+</span>  <span class="n">dfA</span><span class="p">.</span><span class="n">fillna</span><span class="p">(</span><span class="s">'NaN'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">dfA</span>
+</code></pre></div></div>
+<p>The first step we take when we upload our data is to try and standardize it as much as possible. This is so that smaller differences such as capitalization are not registered as large factors for differentiating entities (“Jane F. Doe” should be thought of similarly to “jane f. doe”). Later on, we will discuss how headlines and subheadlines are compared to be duplicates or not, and for that we want them all to be lowercase so that no casing throws off the algorithms we use for comparison. We also remove any trailing or leading whitespaces from the headlines or subheadlines.</p>
+
+<h2 id="step-2-blocking">Step 2: Blocking</h2>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># BLOCKING --- Set up record linkage index and block based on newspaper and publication date
+</span><span class="n">indexer</span> <span class="o">=</span> <span class="n">recordlinkage</span><span class="p">.</span><span class="n">Index</span><span class="p">()</span>
+<span class="c1"># This is now only recognizing the pairs where Newspaper and Publication Date are identical. You can change these to fit your data fields.
+</span><span class="n">indexer</span><span class="p">.</span><span class="n">block</span><span class="p">([</span><span class="s">"Newspaper"</span><span class="p">,</span> <span class="s">"Publication Date"</span><span class="p">])</span>
+<span class="n">candidate_links</span> <span class="o">=</span> <span class="n">indexer</span><span class="p">.</span><span class="n">index</span><span class="p">(</span><span class="n">dfA</span><span class="p">)</span>
+</code></pre></div></div>
+<p>The next step we need to take to find the duplicates is a process called Blocking. This is where we single out the records into one group to be more exhaustively compared. Remember, we want to compare records to find duplicates, and to do that we need to compare each record to each record. With a dataset of around 60,000 articles, that would be 60,000 choose 2 = 1,799,970,000 records to compare. By blocking we drastically reduce the candidate records that we will more deeply inspect.</p>
+
+<p>The actual process of blocking goes as such: we use one or more elements of metadata to ask the recordlinkage function to group by, and it will only give the pairs of records where those elements respectively match. For our case, we use the “Newspaper” and “Publication Date” metadata because for two entries to be duplicates, they almost always will be from the same newspaper, and have the same publication date. Additionally, these are metadata fields which are already standardized in the HUF database, meaning that the format these fields are in will always refer to the same entity.</p>
+
+<p>It is definitely possible that other fields could be used for this blocking method. But in short, we ask the library to do the following: “For my later comparison, give me only the pairs where two article submissions match in their newspaper date, and the day it was published”. By doing this, we reduce our candidate links from 1,799,970,000 records to ~35,000 records.</p>
+
+<h2 id="step-3-record-pair-evaluations">Step 3: Record Pair Evaluations</h2>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># RECORD PAIR EVALUATION --- Compare and Score. You can change these fields and the method of comparison.
+</span><span class="n">compare_cl</span> <span class="o">=</span> <span class="n">recordlinkage</span><span class="p">.</span><span class="n">Compare</span><span class="p">()</span>
+<span class="n">compare_cl</span><span class="p">.</span><span class="n">string</span><span class="p">(</span><span class="s">"Headline"</span><span class="p">,</span> <span class="s">"Headline"</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">"jarowinkler"</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">"Headline"</span><span class="p">)</span>
+<span class="n">compare_cl</span><span class="p">.</span><span class="n">string</span><span class="p">(</span><span class="s">"Sub Headline"</span><span class="p">,</span> <span class="s">"Sub Headline"</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">"jarowinkler"</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s">"Sub Headline"</span><span class="p">,</span> <span class="n">missing_value</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">compare_cl</span><span class="p">.</span><span class="n">exact</span><span class="p">(</span><span class="s">"State"</span><span class="p">,</span> <span class="s">"State"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">"State"</span><span class="p">)</span>
+<span class="n">compare_cl</span><span class="p">.</span><span class="n">exact</span><span class="p">(</span><span class="s">"Page"</span><span class="p">,</span> <span class="s">"Page"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">"Page"</span><span class="p">)</span>
+<span class="n">compare_cl</span><span class="p">.</span><span class="n">exact</span><span class="p">(</span><span class="s">"City"</span><span class="p">,</span> <span class="s">"City"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">"City"</span><span class="p">)</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">compare_cl</span><span class="p">.</span><span class="n">compute</span><span class="p">(</span><span class="n">candidate_links</span><span class="p">,</span> <span class="n">dfA</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Once we have narrowed down our candidate pairs, we can now proceed with a deeper evaluation of each pair. We start by identifying other fields of the metadata that we would like to be included in the “comparison score”. If any particular field matches between two records, then that pair gets a 1.0 instead of a 0.0. At the end, pairs are put in a sorted list by their overall number of metadata field matches.</p>
+
+<p>In our case, we also want to score the pairs on City, State, and Page. And we are comparing on whether or not they are exact matches. However, for Headline and Sub Headline, we want to create a looser threshold for matching. Because the Headline and Sub Headline at times can be inputted differently, we use a string comparison metric called the <a href="https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance" target="_blank" rel="noopener noreferrer">Jaro-Winkler Distance</a> to compute a score between 0.0 and 1.0 and if it is above 0.9, then we assign it a 1.0 score, and if not, then 0.0. Note that the Sub Headline field also has a missing_value=1 flag, this is so that record pairs that both don’t have subheadings will be marked as 1 instead of 0.</p>
+
+<p>The image above displays the distribution of candidate pairs on a total score on a 5 point scale for a particular event in HUF. There are 195 candidate pairs where their metadata matches for all five of our specified metadata fields. One might ask, what about the 4/5 pairs? It turns out by simply viewing these candidate pairs that oftentimes these are pairs where there is a broader top headline, but different articles under different subheadings. Or they are articles that always have the same headline and subheading (like a weekly column) but have different article texts for different days, like in the example below. In all cases they are substantively different articles and should not be considered as duplicates.</p>
+
+<p><img src="../../assets/images/dedup-fourfive.jpg" alt="An example of two entries that are in fact different yet share four of five metrics."></p>
+
+<h2 id="step-4-connected-components">Step 4: Connected Components</h2>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># This is another helper function that transforms the recordlinkage output of connected components to the ids that are duplicates.
+</span><span class="k">def</span> <span class="nf">connectedComponents</span><span class="p">(</span><span class="n">comps</span><span class="p">,</span> <span class="n">dfA</span><span class="p">):</span>
+  <span class="c1"># Turning the Multi Index Components into IDs instead of indexes
+</span>  <span class="n">ID_comps</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">comps</span><span class="p">:</span>
+      <span class="n">ls</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">comp</span><span class="p">:</span>
+          <span class="n">idmatch</span> <span class="o">=</span> <span class="n">dfA</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="s">"Id"</span><span class="p">],</span> <span class="n">dfA</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="s">"Id"</span><span class="p">]</span>
+          <span class="n">ls</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">idmatch</span><span class="p">)</span>
+      <span class="n">mi</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">MultiIndex</span><span class="p">.</span><span class="n">from_tuples</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
+      <span class="n">ID_comps</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">mi</span><span class="p">)</span>
+  <span class="c1"># Going from Edges to Unique Distinct Nodes in the Connected Components
+</span>  <span class="n">ID_matches</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">multi</span> <span class="ow">in</span> <span class="n">ID_comps</span><span class="p">:</span>
+      <span class="n">seen</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">multi</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+              <span class="n">seen</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+          <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+              <span class="n">seen</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+      <span class="n">ID_matches</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">seen</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">ID_matches</span>
+</code></pre></div></div>
+<p>Now that we have the group of 5/5 record pairs which we believe are all duplicates, we want to be able to export that data in a clean way. And the recordlinkage library allows us to do this through its connected components function. While we have been talking about record pairs up until this point, the reality is that the duplicates may actually exist in groups, where three or more records all are about the same article entry, and so each article submission is a duplicate of all other articles in the same group. This forms groups called connected components in mathematical graph theory. We can output the ids of each of these connected components in json format as a list of lists, where each inner list is a group of duplicate entries.</p>
+
+<p><img src="../../assets/images/dedup-ccs.jpg" alt="Groupings of connected components output as a list of lists.">
+<em>Groupings of id connected components output as a list of lists</em></p>
+
+<h2 id="step-5-manual-review">Step 5: Manual Review</h2>
+<p><img src="../../assets/images/dedup-annotate.jpg" alt="The interface provided by recordlinkage to perform manual reviews.">
+<em>The interface provided by recordlinkage to perform manual reviews</em></p>
+
+<p>The last step in this proposed process is to do a manual review. While the intent is for the recordlinkage to find all of the duplicates, we have to account for possible errors. There are two types of errors that can occur, false positives and false negatives. False positives are where the tool identifies what it thinks is a duplicate, however in fact upon review, it is not a duplicate. A false negative is a case where an entry is not correctly identified as a duplicate. As it relates to manual review, we can only reasonably consider the false positive cases, meaning that we look through each of the connected components of duplicates to see if each article is in fact a duplicate of each other. Finding the false negatives would involve looking for duplicates over the entirety of the remaining dataset.</p>
+
+<p>Luckily, recordlinkage also provides <a href="https://recordlinkage.readthedocs.io/en/latest/annotation.html" target="_blank" rel="noopener noreferrer">a tool for this manual review</a>, seen in the image above. This tool’s input is a function output in the recordlinkage library function that you can run. Then you can review all of the proposed matches manually.</p>
+
+<h2 id="future-work-and-what-to-do-with-duplicates">Future Work and What To Do With Duplicates</h2>
+<p>The most simple approach to resolving duplicates is to only use the oldest submission of the connected component of duplicates. Because the ids in HUF are ascending, we can do this easily by taking the lowest number id. However, there are extenuating circumstances about how we resolve duplicates. For one, although the submissions thereafter are indeed duplicates, we want to be able to honor the work that students, users, and citizen historians do to find and upload articles. Oftentimes this can be a gratifying experience to know that they contributed to a dataset and project. A proposed solution to this would be change the contributer field of metadata to include multiple people, which would be all users who have ever found the article.</p>
+
+<p>Second, there may be legitimate differing metadata otherwise that may alter the choice of which entry to use out of all the duplicates. For example, what if a newer submission contains a better image? Or a previously unknown piece of metadata or context that enriches the experience of the particular entry? These examples are likely too diverse to be have a catch-all rule that can be run computationally. It is still yet to be decided how these duplicates should be resolved, and how they should exist in the dataset as the project moves forward.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>In this post, we were able to identify duplicates in a csv dataset using the library recordlinkage. We explained the meaning of deduplication and record linkage, why some duplicates exist in the HUF dataset, and how we can reasonably go about identifying them computationally. We broke down different steps in Python of how we can standardize, block, and create record pair evaluations to identify duplicates. We then discussed the different ways we can resolve duplicates while honoring the work of the citizen historians who found the articles.</p>
+
+
+<!-- Comments only for posts -->
+
+
+            </article>
+        </main>
+
+        <footer>
+
+        <div class="rounded-social-buttons">
+<a title="" class="social-button email" itemprop="email" href="mailto:%6A%6F%65%6C%73%6A%6C%65%65@%64%75%63%6B.%63%6F%6D" target="_blank">
+<i class="far fa-envelope"></i>
+</a><a title="" class="social-button linkedin" href="https://www.linkedin.com/in/joelsjlee" itemprop="sameAs" target="_blank" rel="noopener noreferrer">
+<i class="fab fa-linkedin"></i>
+</a><a title="" class="social-button github" href="https://www.github.com/joelsjlee" itemprop="sameAs" target="_blank" rel="noopener noreferrer">
+<i class="fab fa-github"></i>
+</a><a title="" class="social-button twitter" href="https://www.twitter.com/joelsjlee" itemprop="sameAs" target="_blank" rel="noopener noreferrer">
+<i class="fab fa-twitter"></i>
+</a>
+</div>
+
+
+        </footer>
+
+        <!-- Google Analytics Tracking code -->
+<script src="https://cdn.jsdelivr.net/npm/ga-lite@1/dist/ga-lite.min.js" async></script>
+<script>
+var galite = galite || {};
+galite.UA = '';
+</script>
+
+    </body>
+
+</html>
