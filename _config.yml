@@ -5,7 +5,7 @@ description: Data Engineer in the Digital Scholarship Group at Northeastern Libr
 
 baseurl:  #name of GitHub repository
 url: "joelsjlee.com" #custom url to be used instead of GitHub repository
-email: "joelsjlee@duck.com"#
+email: "joelsjlee@gmail.com"#
 
 
 highlighter: rouge
@@ -17,7 +17,6 @@ permalink: /blog/:year/:title/
 paginate_path: /blog/page:num/
 
 # Social media links in footer
-twitter: "joelsjlee"
 linkedin: "joelsjlee"
 github: "joelsjlee"
 # researchgate: "#"

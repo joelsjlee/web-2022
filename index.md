@@ -8,7 +8,7 @@ published: true
 ---
 
 
-Hi, my name is Joel. I am the Data Engineer in the Digital Scholarship Group at Northeastern Library. Previously, I was a researcher in Digital Humanities and the 2021-2022 Digital Humanities Associate Fellow at the United States Holocaust Memorial Museum. There, I worked on a project on how newspapers varied headlines in Associated Press wire copy during key moments in the American reporting of the Holocaust, as well other innovative digital projects at the museum.
+Hi, my name is Joel. I am the Data Engineer in the <a href="https://dsg.northeastern.edu/" target="_blank">Digital Scholarship Group</a> at <a href="https://library.northeastern.edu/" target="_blank">Northeastern Library</a>. Previously, I was a researcher in Digital Humanities and the <a href="https://www.ushmm.org/research/opportunities-for-academics/fellowships/digital" target="_blank">2021-2022 Digital Humanities Associate Fellow</a> at the United States Holocaust Memorial Museum. There, I worked on a project on how newspapers varied headlines in Associated Press wire copy during key moments in the American reporting of the Holocaust, as well other innovative digital projects at the museum.
 
 I graduated from the University of Pennsylvania in May of 2021, where I completed a double major in Computer Science and English Literature. Most of my academic and technical work was done with the <a href="https://pricelab.sas.upenn.edu/" target="_blank">Price Lab for Digital Humanities</a> and Penn Libraries' <a href="https://guides.library.upenn.edu/digital-scholarship" target="_blank">Research Data and Digital Scholarship</a> team, where I worked on a variety of DH projects in the humanities and arts.
 
