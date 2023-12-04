@@ -57,6 +57,7 @@ exclude:
   - README.md
   - LICENSE.md
   - cache/
+  - vendor/bundle
 
 plugins:
   - jekyll-seo-tag
