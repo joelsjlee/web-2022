@@ -1,65 +1,27 @@
-### your site title here
+title: Joel Lee # name of the site
+author: Joel Lee # name of site's author
+email: joe.lee@northeastern.edu # email of site's author
+url: https://joelsjlee.com # root address of the site
+baseurl: "" # subpath of the site, e.g. "/blog" (leave it blank "" if you're site shouldn't use a subpath)
+description: > # description of the site (multiple lines allowed)
+  Bio page
 
-title: Joel Lee
-description: Data Engineer in the Digital Scholarship Group at Northeastern Library
+permalink: /:slug.html
 
-baseurl:  #name of GitHub repository
-url: "joelsjlee.com" #custom url to be used instead of GitHub repository
-email: "joelsjlee@gmail.com"#
+# favicon: "logo.png" # name+extension of favicon (which must be put on the root folder)
+# goat_counter: "yoursitename" # put your GoatCounter name if you want to use GoatCounter analytics
 
+theme: no-style-please # if you are using GitHub Pages, change it to remote_theme: riggraz/no-style-please
 
-highlighter: rouge
-markdown: kramdown
-
-# Pagination
-paginate: 4
-permalink: /blog/:year/:title/
-paginate_path: /blog/page:num/
-
-# Social media links in footer
-linkedin: "joelsjlee"
-github: "joelsjlee"
-# researchgate: "#"
-# orcid: "#"
-
-highlighter: rouge
-markdown: kramdown
-
-# Tracker
-analytics:
-
-#optimization -> compress.html
-compress_html:
-  clippings: [html,div, p, ul, td, h1, h2, h3, h4,link, meta, footer, nav, img, header, hr, br, head, style, li, ul, ol, time, main, script, title]
-  comments: ["<!-- ", " -->"]
-  endings: [all]
-  ignore:
-    envs: [local]
-  blanklines: false
-  profile: false
-  startings: []
-
-#collection
-collections:
-  projects:
-    output: true
-    permalink: /projects/:path/
+theme_config:
+  appearance: "light" # can be "light", "dark" or "auto"
+  back_home_text: ".." # customize text for homepage link in post layout
+  date_format: "%Y-%m-%d" # customize how date is formatted
+  show_description: false # show blog description in home page
 
 sass:
-  sass_dir: /assets/css/_sass
-  style: compressed
-
-include:
-  - _pages
-
-exclude:
-  - README.md
-  - LICENSE.md
-  - cache/
-  - vendor/bundle
+  style: :compressed
 
 plugins:
+  - jekyll-feed
   - jekyll-seo-tag
-  - jekyll-paginate
-  - jekyll-email-protect
-  - jekyll-target-blank

@@ -1,0 +1,36 @@
+# For documentation on this file, see:
+# https://github.com/riggraz/no-style-please#customize-the-menu
+
+entries:
+  - title: Hi, my name is Joel! I work in the <a href="https://library.northeastern.edu/digital_scholarship/digital-scholarship/" target="_blank">Digital Scholarship Group</a> at Northeastern Library. I am currently working on the <a href="https://crrj.org/" target="_blank">Civil Rights and Restorative Justice Project</a>, the <a href="https://bostonresearchcenter.org/" target="_blank">Boston Research Center</a>, and projects with the <a href="https://www.primarysourcecoop.org/" target="_blank">Massachusetts Historical Society</a> and <a href="https://digitalhumanities.org/dhq/" target="_blank">Digital Humanities Quarterly</a>. I previously was a researcher and fellow in Digital Humanities at the <a href="https://www.ushmm.org/research/opportunities-for-academics/fellowships/digital" target="_blank">United States Holocaust Memorial Museum</a>, and before that I worked as a student with the <a href="https://pricelab.sas.upenn.edu/" target="_blank">Price Lab for Digital Humanities</a> and <a href="https://www.library.upenn.edu/rdds" target="_blank">Penn Libraries</a>.
+  - title: I have many people to thank who have been mentors, friends, and role models, including Jim English, Stewart Varner, Silvina Fernandez-Duque, Benjamin Lee, Robert Ehrenreich, Eric Schmalz, Russ Sitka, William Mattingly, Liz Polcha, and lastly Scott Enderle, whose support for me while I was a student was truly formative. Without Scott, I would have never been involved in DH, and I dedicate all my work to his kindness and thoughtfulness.
+  - title: email
+    url: mailto:joe.lee@northeastern.edu
+
+  # - title: all posts
+  #   post_list:
+  #     limit: 5
+  #     show_more: true
+  #     show_more_text: See archive...
+  #     show_more_url: archive.html
+
+  # - title: posts by category
+  #   post_list:
+  #     category: example2
+  #     show_more: true
+  #     show_more_text: See more posts...
+  #     show_more_url: example2-archive.html
+
+  # - title: rss
+  #   url: feed.xml
+  
+  # - title: another list
+  #   entries:
+  #     - title: with subitems
+  #       entries:
+  #         - title: with subsubitems
+  #         - title: example page
+  #           url: about
+  # - title: PRO TIP
+  #   entries:
+  #     - title: to edit this menu, edit _data/menu.yml file
